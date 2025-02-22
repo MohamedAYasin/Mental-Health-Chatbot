@@ -1,8 +1,8 @@
 # **Mental Health Chatbot**
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/f960b56d-cd2e-4720-baf7-8ffc576734e6" width="300px" height="300px" />
-  <img src="https://github.com/user-attachments/assets/59046f0c-34f1-4dc2-b994-bbdf52d9259a" width="300px" height="300px" />
+  <img src="https://github.com/user-attachments/assets/f960b56d-cd2e-4720-baf7-8ffc576734e6" width="400px" height="400px" />
+  <img src="https://github.com/user-attachments/assets/59046f0c-34f1-4dc2-b994-bbdf52d9259a" width="400px" height="400px" />
 </p>
 
 ## **Project Overview**
@@ -21,6 +21,9 @@ The dataset used for this project was created by the author and is available on 
 - Split the dataset into training and validation sets.
 
 ### **2. Visualizations**
+
+![Image](https://github.com/user-attachments/assets/738a9384-22f1-4c49-87f2-724528e1963d)
+
 - Plotted word frequency distribution to analyze commonly used terms.
 - Displayed the distribution of intent categories to ensure dataset balance.
 
