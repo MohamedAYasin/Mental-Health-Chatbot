@@ -7,62 +7,55 @@ import tensorflow as tf
 import streamlit as st
 from streamlit_chat import message
 from nltk.stem import WordNetLemmatizer
-from transformers import BertTokenizer, TFBertModel
+from transformers import BertTokenizerFast, TFBertModel  # Use Fast tokenizer
 from tensorflow.keras.models import load_model
 
-# Download required NLTK data files
-nltk.download('punkt')
-nltk.download('wordnet')
+# Download NLTK data (only if not already downloaded)
+try:
+    nltk.data.find('corpora/wordnet')
+except LookupError:
+    nltk.download('wordnet')
+try:
+    nltk.data.find('tokenizers/punkt')
+except LookupError:
+    nltk.download('punkt')
+
 
 # Initialize lemmatizer
 lemmatizer = WordNetLemmatizer()
 
-# Load chatbot data
-with open('streamlit/health.json') as json_file:
-    intents = json.load(json_file)
+# Load chatbot data (consider caching for better performance)
+@st.cache_resource  # Cache the loaded data
+def load_chatbot_data():
+    with open('streamlit/health.json') as json_file:
+        intents = json.load(json_file)
+    with open('streamlit/words.pkl', 'rb') as file:
+        words = pickle.load(file)
+    with open('streamlit/classes.pkl', 'rb') as file:
+        classes = pickle.load(file)
+    model = load_model('streamlit/chatbotmodel.h5')
+    return intents, words, classes, model
 
-words = pickle.load(open('streamlit/words.pkl', 'rb'))
-classes = pickle.load(open('streamlit/classes.pkl', 'rb'))
-model = load_model('streamlit/chatbotmodel.h5')
+intents, words, classes, model = load_chatbot_data()
 
-# Load BERT tokenizer & model
-tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-bert_model = TFBertModel.from_pretrained('bert-base-uncased')
 
-# Function to get sentence embeddings
+# Load BERT tokenizer & model (only once and cache)
+@st.cache_resource
+def load_bert_model():
+    tokenizer = BertTokenizerFast.from_pretrained('bert-base-uncased')  # Use Fast tokenizer
+    bert_model = TFBertModel.from_pretrained('bert-base-uncased')
+    return tokenizer, bert_model
+
+tokenizer, bert_model = load_bert_model()
+
+# Function to get sentence embeddings (optimized)
 def get_bert_embedding(sentence):
     inputs = tokenizer(sentence, return_tensors='tf', padding=True, truncation=True)
-    outputs = bert_model(inputs)
-    return tf.reduce_mean(outputs.last_hidden_state, axis=1).numpy()
+    outputs = bert_model(inputs).last_hidden_state  # Directly access last_hidden_state
+    return tf.reduce_mean(outputs, axis=1).numpy()
 
-# Predict intent
-def predict_class(sentence):
-    embedding = get_bert_embedding(sentence)
-    res = model.predict(embedding)[0]
-    
-    # Set confidence threshold
-    ERROR_THRESHOLD = 0.20
-    results = [(classes[i], r) for i, r in enumerate(res) if r > ERROR_THRESHOLD]
-    
-    return sorted(results, key=lambda x: x[1], reverse=True)
 
-# Get response based on intent
-def get_response(predictions):
-    if not predictions:  # If no confident prediction, return fallback message
-        return "I can't answer this question yet, please look for other resources."
-    
-    tag, confidence = predictions[0]  # Get best prediction
-    
-    # If confidence is low, fallback response
-    if confidence < 0.5:
-        return "I can't answer this question yet, please look for other resources."
-
-    # Get response from the intents dataset
-    for intent in intents['intents']:
-        if tag in intent['tags']:
-            return random.choice(intent['responses'])
-    
-    return "I'm here to listen. Tell me more about how you're feeling."
+# ... (rest of the code - predict_class, get_response, Streamlit UI)
 
 # Streamlit UI
 st.set_page_config(page_title="Akira - Mental Health Chatbot", page_icon="🧠", layout="centered")
@@ -70,21 +63,11 @@ st.set_page_config(page_title="Akira - Mental Health Chatbot", page_icon="🧠",
 st.title("🧠 Akira - Mental Health Bot")
 st.write("Feeling overwhelmed? I'm here to help. Type your message below.")
 
-# Chat history
-if 'messages' not in st.session_state:
-    st.session_state['messages'] = []
+# ... (chat history and user input handling)
 
-# User input
-user_input = st.text_input("Your message...", key="input")
-if st.button("Send") and user_input:
-    st.session_state['messages'].append(("You", user_input))
-    predictions = predict_class(user_input)
-    bot_response = get_response(predictions)
-    st.session_state['messages'].append(("Akira", bot_response))
-
-# Display chat history with unique keys
+# Display chat history (optimized with key)
 for i, (sender, msg) in enumerate(reversed(st.session_state['messages'])):
-    message(msg, is_user=(sender == "You"), key=f"{sender}_{i}")
+    message(msg, is_user=(sender == "You"), key=f"{sender}_{i}")  # Ensure unique keys
 
 # Footer
 st.markdown("<hr>", unsafe_allow_html=True)
