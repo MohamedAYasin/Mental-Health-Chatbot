@@ -82,6 +82,6 @@ This project is licensed under the MIT License.
 ---
 ### **Author**
 
-Developed by: © 2025 (Mohamed Yasin)[https://github.com/mohamedAYasin/]
+Developed by: © 2025 [Mohamed Ahmed Yasin](https://github.com/mohamedAYasin/)
 
 
