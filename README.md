@@ -95,7 +95,8 @@ pip install -r requirements.txt
 - 📂 **Dataset:** [**Mental Health Dataset**](https://www.kaggle.com/datasets/mohamedyasino/mental-health-chatbot)  
 - 📓 **The Notebook:** [**GitHub Notebook**](https://github.com/MohamedAYasin/Mental-Health-Chatbot/blob/main/Notebook/Mental_Health.ipynb)  
 - 📁 **The GitHub Repository:** [**AKIRA Mental Health Chatbot REPO**](https://github.com/MohamedAYasin/Mental-Health-Chatbot.git)
-- 🌐 **Streamlit:** [**AKIRA Mental Health Chatbot UI**](https://akira-mental-health-chatbot.streamlit.app/)  
+- 🌐 **Streamlit:** [**AKIRA Mental Health Chatbot UI**](https://akira-mental-health-chatbot.streamlit.app/)
+- **Report Document:** [**Project Report**](https://docs.google.com/document/d/1I2tewXBU2FJa8suUqNdzL39na59HgbidmSKT5GfFqtU/edit?usp=sharing)
 - 🎥 **Demo Video:** [**AKIRA Demo Video**](https://youtu.be/NnI5l-Xzo94)  
 
 ---  
