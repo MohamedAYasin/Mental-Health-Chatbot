@@ -7,7 +7,7 @@ import tensorflow as tf
 import streamlit as st
 from streamlit_chat import message
 from nltk.stem import WordNetLemmatizer
-from transformers import BertTokenizer, TFBertModel
+from transformers import DistilBertTokenizer, TFDistilBertModel
 from tensorflow.keras.models import load_model
 
 # Download required NLTK data files
@@ -26,8 +26,8 @@ classes = pickle.load(open('streamlit/classes.pkl', 'rb'))
 model = load_model('streamlit/chatbotmodel.h5')
 
 # Load BERT tokenizer & model
-tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-bert_model = TFBertModel.from_pretrained('bert-base-uncased')
+tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
+bert_model = TFDistilBertModel.from_pretrained('distilbert-base-uncased')
 
 # Function to get sentence embeddings
 def get_bert_embedding(sentence):
