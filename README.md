@@ -1,4 +1,4 @@
-#                                **Mental Health Chatbot**
+#                                **AKIRA - Mental Health Chatbot**
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/f960b56d-cd2e-4720-baf7-8ffc576734e6" width="400px" height="400px" />
