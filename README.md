@@ -1,4 +1,4 @@
-#                                **AKIRA - Mental Health Chatbot**
+#                                **AKIRA - MENTAL HEALTH CHATBOT**
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/f960b56d-cd2e-4720-baf7-8ffc576734e6" width="400px" height="400px" />
@@ -7,18 +7,18 @@
 
 --- 
 
-## **Project Overview**
+## **1- PROJECT OVERVIEW**
 This project focuses on developing a mental health chatbot using a machine learning model trained on a dataset containing 50 different questions related to mental health topics such as anxiety, depression, PTSD, stress management, and general wellness. The chatbot is designed to classify user queries into predefined intents and generate appropriate responses.
 
 ---
 
-## **Dataset**
+## **2- Dataset**
 The dataset used for this project was created by the author and is available on Kaggle:
 [**Mental Health Dataset**](https://www.kaggle.com/datasets/mohamedyasino/mental-health-chatbot)
 
 ---
 
-## **Project Workflow**
+## **3- PROJECT WORKFLOW**
 
 ### **1. Data Preprocessing**
 - Cleaned and tokenized text data.
@@ -28,7 +28,7 @@ The dataset used for this project was created by the author and is available on 
 
 ---
 
-### **2. Visualizations**
+### **4- VISUALIZATIONS**
 
 ![Image](https://github.com/user-attachments/assets/738a9384-22f1-4c49-87f2-724528e1963d)
 
@@ -37,7 +37,7 @@ The dataset used for this project was created by the author and is available on 
 
 ---
 
-### **3. Model Training**
+### **5- MODEL TRAINING**
 - Used a deep learning model with an LSTM-based architecture.
 - Implemented a sequential model with embedding layers, LSTM layers, and dense output layers.
 - Applied categorical cross-entropy loss function and Adam optimizer.
@@ -45,7 +45,7 @@ The dataset used for this project was created by the author and is available on 
 
 ---
 
-### **4. Model Evaluation & Fine-Tuning**
+### **6- MODEL EVALUATION AND FINE TUNING**
 - Evaluated the model using:
   - **ROUGE Score** (measuring response relevance)
   - **F1-Score & Accuracy** (to assess classification performance)
@@ -53,7 +53,7 @@ The dataset used for this project was created by the author and is available on 
 
 ---
 
-### **5. Testing the Chatbot**
+### **7- AKIRA CHATBOT**
 - Tested the chatbot by feeding user queries and analyzing response accuracy.
 - Conducted manual testing with sample questions to verify intent classification.
 
@@ -61,19 +61,19 @@ The dataset used for this project was created by the author and is available on 
 
 ---
 
-## **Results**
+## **8- RESULTS**
 - Achieved high accuracy in intent classification.
 - The chatbot successfully generated relevant responses to mental health queries.
 - Fine-tuning improved response coherence and reduced incorrect classifications.
 
 ---
 
-## **Conclusion**
+## **9- CONCLUSION**
 This project successfully demonstrates how AI-powered chatbots can provide structured and supportive mental health assistance. By leveraging machine learning techniques and NLP models, the chatbot effectively classifies user queries and delivers appropriate responses. Future improvements could involve expanding the dataset, integrating real-time feedback mechanisms, and implementing a more advanced transformer-based model for enhanced response quality.
 
 ---
 
-### ** ⚙️ How to Use**  
+### ** ⚙️10- HOW TO USE**  
 
 #### Clone the Repository  
 ```bash
@@ -83,26 +83,26 @@ cd Mental-Health-Chatbot
 
 ---
 
-### 🛠️ Install Dependencies
+#### Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
 ---
 
-## 🎯 iMPORTANT LINKS
+## 🎯** 11- IMPORTANT LINKS**
 
-- Streamlit: **https://akira-mental-health-chatbot.streamlit.app/**
+- **Streamlit:** **https://akira-mental-health-chatbot.streamlit.app/**
 
-- The Notebook: https://github.com/MohamedAYasin/Mental-Health-Chatbot/blob/main/Notebook/Mental_Health.ipynb
+- **The Notebook:** https://github.com/MohamedAYasin/Mental-Health-Chatbot/blob/main/Notebook/Mental_Health.ipynb
 
-- The GitHub Repository: https://github.com/MohamedAYasin/Mental-Health-Chatbot.git
+- **The GitHub Repository:** https://github.com/MohamedAYasin/Mental-Health-Chatbot.git
 
-- Demo Video:
+-**Demo Video:** 
 
 ---
 
-### ،🚀 Future Improvements
+### ،🚀 **12- FUTURE IMPROVEMENTS**
 
 - One key improvement is adjusting the confidence threshold to prevent incorrect predictions.
   
@@ -110,12 +110,12 @@ pip install -r requirements.txt
 
 ---
 
-### 📜 License
+### 📜 **13- LICENSE**
 This project is licensed under the MIT License.
 
 ---
 
-### 📚 Author
+### 📚** 14- AUTHOR**
 
 Developed by: © 2025 [Mohamed Ahmed Yasin](https://github.com/mohamedAYasin/)
 
