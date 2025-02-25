@@ -1,0 +1,8 @@
+nltk
+numpy
+json
+pickle
+tensorflow
+streamlit
+streamlit-chat
+transformers
