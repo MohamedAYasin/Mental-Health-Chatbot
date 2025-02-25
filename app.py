@@ -35,12 +35,14 @@ bert_model = TFBertModel.from_pretrained('bert-base-uncased')
 # ------------------------- Helper Functions -------------------------
 
 # Function to get sentence embeddings
+@st.cache_resource
 def get_bert_embedding(sentence):
     inputs = tokenizer(sentence, return_tensors='tf', padding=True, truncation=True)
     outputs = bert_model(inputs)
     return tf.reduce_mean(outputs.last_hidden_state, axis=1).numpy()
 
 # Predict intent
+@st.cache_resource
 def predict_class(sentence):
     embedding = get_bert_embedding(sentence)
     res = model.predict(embedding)[0]
@@ -89,23 +91,27 @@ if 'messages' not in st.session_state:
 user_input = st.text_input("Your message...", key="input")
 
 if st.button("Send") and user_input:
-    st.session_state['messages'].append(("You", user_input))
+    try:
+        st.session_state['messages'].append(("You", user_input))
 
-    # If the input is a greeting, respond accordingly
-    if is_greeting(user_input):
-        greeting_responses = [
-            "Hello! 👋 I'm here to help with mental health support. How can I assist you today?",
-            "Hi! 👋 If you're feeling overwhelmed, I'm here to listen. How can I help?",
-            "Hey there! 🌟 I'm Akira, your mental health assistant. What's on your mind?"
-        ]
-        bot_response = random.choice(greeting_responses)
-    else:
-        # Get predictions from the model
-        predictions = predict_class(user_input)
-        # Get the chatbot's response based on predicted intent
-        bot_response = get_response(predictions)
+        # If the input is a greeting, respond accordingly
+        if is_greeting(user_input):
+            greeting_responses = [
+                "Hello! 👋 I'm here to help with mental health support. How can I assist you today?",
+                "Hi! 👋 If you're feeling overwhelmed, I'm here to listen. How can I help?",
+                "Hey there! 🌟 I'm Akira, your mental health assistant. What's on your mind?"
+            ]
+            bot_response = random.choice(greeting_responses)
+        else:
+            # Get predictions from the model
+            predictions = predict_class(user_input)
+            # Get the chatbot's response based on predicted intent
+            bot_response = get_response(predictions)
 
-    st.session_state['messages'].append(("Akira", bot_response))
+        st.session_state['messages'].append(("Akira", bot_response))
+    
+    except Exception as e:
+        st.error(f"An error occurred: {str(e)}")
 
 # Display chat history with unique keys
 for i, (sender, msg) in enumerate(reversed(st.session_state['messages'])):
