@@ -54,13 +54,34 @@ The dataset used for this project was created by the author and is available on 
 This project successfully demonstrates how AI-powered chatbots can provide structured and supportive mental health assistance. By leveraging machine learning techniques and NLP models, the chatbot effectively classifies user queries and delivers appropriate responses. Future improvements could involve expanding the dataset, integrating real-time feedback mechanisms, and implementing a more advanced transformer-based model for enhanced response quality.
 
 ---
-### **How to Use**
-1. Clone the repository.
-2. Install the required dependencies (`pip install -r requirements.txt`).
-3. Run the chatbot script to interact with the model.
+### ** ⚙️ How to Use**  
+
+### ** Clone the Repository**  
+```bash
+git clone https://github.com/MohamedAYasin/Mental-Health-Chatbot.git
+cd Mental-Health-Chatbot
+```
+
+### **Install Dependencies**
+```bash
+pip install -r requirements.txt
+```
+
+## Running the Streamlit
+The deployed streamlit chatbot is located at: https://akira-mental-health-chatbot.streamlit.app/
+
+### ،🚀 Future Improvements
+
+- One key improvement is adjusting the confidence threshold to prevent incorrect predictions.
+  
+-  I also optimized memory usage by preloading the BERT model only once, reducing overhead
+
+### 📜 License
+This project is licensed under the MIT License.
 
 ---
 ### **Author**
-Developed by Mohamed Yasin
+
+Developed by: © 2025 (Mohamed Yasin)[https://github.com/mohamedAYasin/]
 
 
