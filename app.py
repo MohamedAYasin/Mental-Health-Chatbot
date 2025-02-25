@@ -23,16 +23,6 @@ with open("streamlit/health.json", "r") as f:
 with open('streamlit/words.pkl', 'rb') as f:
     classes = pickle.load(f)
 
-# Hardcoded greeting responses
-greeting_responses = [
-    "Hello! 👋 I'm here to support you with mental health. Feel free to ask any questions.",
-    "Hey there! 🌟 I'm your mental health assistant. How can I help you today?",
-    "Hi! 👋 I'm here to respond and offer support. What's on your mind?",
-]
-
-# Common greetings to check for
-greeting_keywords = {"hi", "hello", "hey", "good morning", "good afternoon", "good evening"}
-
 # ------------------- Defining Helper Functions -------------------
 
 # Function to generate BERT embedding (cached to save memory)
@@ -54,16 +44,10 @@ def predict_class(sentence):
     """
     embedding = get_bert_embedding(sentence)
     res = model.predict(embedding)[0]
-    
-    # Print the predictions for debugging
-    print(f"Predictions: {res}")
-    
-    ERROR_THRESHOLD = 0.25  # Try lowering the threshold for more flexible responses
+
+    ERROR_THRESHOLD = 0.33
     results = [[i, r] for i, r in enumerate(res) if r > ERROR_THRESHOLD]
     results.sort(key=lambda x: x[1], reverse=True)
-
-    # Print the sorted results for debugging
-    print(f"Sorted results: {results}")
 
     if results:
         return [{'intent': classes[r[0]], 'probability': str(r[1])} for r in results]
@@ -79,14 +63,9 @@ def get_response(intents_list, intents_json):
         return "Sorry, I don't understand. Can you rephrase your question?"
 
     tag = intents_list[0]['intent']
-    print(f"Predicted tag: {tag}")  # Print the predicted tag for debugging
-    
-    # Check if the tag exists in the intents_json
     for intent in intents_json['intents']:
         if tag in intent['tags']:
-            print(f"Found response for tag: {tag}")  # Confirm tag matching
             return random.choice(intent['responses'])
-    
     return "Sorry, I couldn't understand. Please ask me something else."
 
 # ------------------- Building the Streamlit Interface -------------------
@@ -101,14 +80,10 @@ user_input = st.text_input("You:")
 if user_input:
     user_text = user_input.lower().strip()
 
-    # Check if the input is a greeting
-    if any(word in user_text for word in greeting_keywords):
-        response = random.choice(greeting_responses)
-    else:
-        # Get predictions from the model
-        predicted_intents = predict_class(user_text)
-        # Get the chatbot's response based on predicted intent
-        response = get_response(predicted_intents, intents_dict)
+    # Get predictions from the model
+    predicted_intents = predict_class(user_text)
+    # Get the chatbot's response based on predicted intent
+    response = get_response(predicted_intents, intents_dict)
 
     # Display the bot's response
     st.write(f"Akira: {response}")
