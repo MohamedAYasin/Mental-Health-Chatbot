@@ -4,3 +4,4 @@ tensorflow
 transformers
 nltk
 tf-keras
+torch
