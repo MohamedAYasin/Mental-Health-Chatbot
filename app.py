@@ -1,94 +1,116 @@
-import streamlit as st
-from transformers import BertTokenizer, BertModel
+import nltk
+import numpy as np
 import json
-import random
 import pickle
-import torch
+import random
+import tensorflow as tf
+import streamlit as st
+from streamlit_chat import message
+from nltk.stem import WordNetLemmatizer
+from transformers import BertTokenizer, TFBertModel
 from tensorflow.keras.models import load_model
 
-# Load the pre-trained BERT tokenizer and model (this is for embeddings)
+# ------------------------- Load Models and Data -------------------------
+
+# Download required NLTK data files
+nltk.download('punkt')
+nltk.download('wordnet')
+
+# Initialize lemmatizer
+lemmatizer = WordNetLemmatizer()
+
+# Load chatbot data
+with open('streamlit/health.json') as json_file:
+    intents = json.load(json_file)
+
+# Load model and tokenizer
+words = pickle.load(open('streamlit/words.pkl', 'rb'))
+classes = pickle.load(open('streamlit/classes.pkl', 'rb'))
+model = load_model('streamlit/chatbotmodel.h5')
+
+# Load BERT tokenizer & model
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-bert_model = BertModel.from_pretrained('bert-base-uncased')
+bert_model = TFBertModel.from_pretrained('bert-base-uncased')
 
-# Load the saved Keras chatbot model
-model = load_model('./data/model/chatbotmodel.h5')
+# ------------------------- Helper Functions -------------------------
 
-# Load the intents dictionary 
-with open("./data/json/health.json", "r") as f:
-    intents_dict = json.load(f)
-
-# Load the list of classes (tags)
-with open('./data/model/classes.pkl', 'rb') as f:
-    classes = pickle.load(f)
-
-# Hardcoded greeting responses
-greeting_responses = [
-    "Hello! 👋 I'm your Mental Health Bot. Ask me anything, and I'll be happy to help!",
-    "Hey there! 🌍 I'm here to answer your questions about mental health. Just ask, and I'll do my best!",
-    "Hi! 👋 Need health info? Just ask, and I'll provide insights!",
-]
-
-# Common greetings to check for
-greeting_keywords = {"hi", "hello", "hey", "good morning", "good afternoon", "good evening"}
-
-# Helper Functions
-
+# Function to get sentence embeddings
 def get_bert_embedding(sentence):
-    """
-    Generate a BERT embedding for a given sentence.
-    """
-    inputs = tokenizer(sentence, return_tensors='pt', padding=True, truncation=True)
-    with torch.no_grad():
-        outputs = bert_model(**inputs)
-    return outputs.last_hidden_state.mean(dim=1).detach().numpy()
+    inputs = tokenizer(sentence, return_tensors='tf', padding=True, truncation=True)
+    outputs = bert_model(inputs)
+    return tf.reduce_mean(outputs.last_hidden_state, axis=1).numpy()
 
+# Predict intent
 def predict_class(sentence):
-    """
-    Predict the intent of an input sentence using the trained chatbot model.
-    """
     embedding = get_bert_embedding(sentence)
     res = model.predict(embedding)[0]
-    ERROR_THRESHOLD = 0.33
-    results = [[i, r] for i, r in enumerate(res) if r > ERROR_THRESHOLD]
-    results.sort(key=lambda x: x[1], reverse=True)
+    
+    # Set confidence threshold
+    ERROR_THRESHOLD = 0.20
+    results = [(classes[i], r) for i, r in enumerate(res) if r > ERROR_THRESHOLD]
+    
+    return sorted(results, key=lambda x: x[1], reverse=True)
 
-    if results:
-        return [{'intent': classes[r[0]], 'probability': str(r[1])} for r in results]
-    else:
-        return []
+# Get response based on intent
+def get_response(predictions):
+    if not predictions:  # If no confident prediction, return fallback message
+        return "I can't answer this question yet, please look for other resources."
+    
+    tag, confidence = predictions[0]  # Get best prediction
+    
+    # If confidence is low, fallback response
+    if confidence < 0.5:
+        return "I can't answer this question yet, please look for other resources."
 
-def get_response(intents_list, intents_json):
-    """
-    Retrieve a response based on the predicted intent.
-    """
-    if not intents_list:
-        return "Sorry, I don't understand."
-
-    tag = intents_list[0]['intent']
-    for intent in intents_json['intents']:
+    # Get response from the intents dataset
+    for intent in intents['intents']:
         if tag in intent['tags']:
             return random.choice(intent['responses'])
-    return "Sorry, I don't understand."
+    
+    return "I'm here to listen. Tell me more about how you're feeling."
 
-# Streamlit Interface
+# Check if input is a greeting
+def is_greeting(user_input):
+    greeting_keywords = {"hi", "hello", "hey", "good morning", "good afternoon", "good evening"}
+    return any(word in user_input.lower() for word in greeting_keywords)
 
-st.title("Health Chatbot")
-st.markdown("Ask me a mental health-related question!")
+# ------------------------- Streamlit UI -------------------------
+
+# Streamlit settings
+st.set_page_config(page_title="Akira - Mental Health Chatbot", page_icon="🧠", layout="centered")
+st.title("🧠 Akira - Mental Health Bot")
+st.write("Feeling overwhelmed? I'm here to help. Type your message below.")
+
+# Chat history
+if 'messages' not in st.session_state:
+    st.session_state['messages'] = []
 
 # User input
-user_input = st.text_input("You:")
+user_input = st.text_input("Your message...", key="input")
 
-if user_input:
-    user_text = user_input.lower().strip()
+if st.button("Send") and user_input:
+    st.session_state['messages'].append(("You", user_input))
 
-    # Check if user input is a greeting
-    if any(word in user_text for word in greeting_keywords):
-        response = random.choice(greeting_responses)
+    # If the input is a greeting, respond accordingly
+    if is_greeting(user_input):
+        greeting_responses = [
+            "Hello! 👋 I'm here to help with mental health support. How can I assist you today?",
+            "Hi! 👋 If you're feeling overwhelmed, I'm here to listen. How can I help?",
+            "Hey there! 🌟 I'm Akira, your mental health assistant. What's on your mind?"
+        ]
+        bot_response = random.choice(greeting_responses)
     else:
         # Get predictions from the model
-        predicted_intents = predict_class(user_text)
+        predictions = predict_class(user_input)
         # Get the chatbot's response based on predicted intent
-        response = get_response(predicted_intents, intents_dict)
+        bot_response = get_response(predictions)
 
-    # Display bot's response
-    st.write("Bot:", response)
+    st.session_state['messages'].append(("Akira", bot_response))
+
+# Display chat history with unique keys
+for i, (sender, msg) in enumerate(reversed(st.session_state['messages'])):
+    message(msg, is_user=(sender == "You"), key=f"{sender}_{i}")
+
+# Footer
+st.markdown("<hr>", unsafe_allow_html=True)
+st.markdown('<p style="text-align:center; color:gray;">© 2025 Mohamed Ahmed Yasin - Stay Strong 💙</p>', unsafe_allow_html=True)
