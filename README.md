@@ -96,7 +96,7 @@ pip install -r requirements.txt
 - 📓 **The Notebook:** [**GitHub Notebook**](https://github.com/MohamedAYasin/Mental-Health-Chatbot/blob/main/Notebook/Mental_Health.ipynb)  
 - 📁 **The GitHub Repository:** [**Mental Health Chatbot**](https://github.com/MohamedAYasin/Mental-Health-Chatbot.git)
 - 🌐 **Streamlit:** [**Akira Mental Health Chatbot**](https://akira-mental-health-chatbot.streamlit.app/)  
-- 🎥 **Demo Video:** (Link to be added)  
+- 🎥 **Demo Video:** [**Demo Video**](https://youtu.be/NnI5l-Xzo94)  
 
 ---  
 
