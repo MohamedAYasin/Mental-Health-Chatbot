@@ -18,12 +18,12 @@ nltk.download('wordnet')
 lemmatizer = WordNetLemmatizer()
 
 # Load chatbot data
-with open('health.json') as json_file:
+with open('./streamlit/health.json') as json_file:
     intents = json.load(json_file)
 
-words = pickle.load(open('words.pkl', 'rb'))
-classes = pickle.load(open('classes.pkl', 'rb'))
-model = load_model('chatbotmodel.h5')
+words = pickle.load(open('./streamlit/words.pkl', 'rb'))
+classes = pickle.load(open('./streamlit/classes.pkl', 'rb'))
+model = load_model('./streamlit/chatbotmodel.h5')
 
 # Load BERT tokenizer & model
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
