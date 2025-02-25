@@ -9,9 +9,9 @@ from streamlit_chat import message
 from nltk.stem import WordNetLemmatizer
 from tensorflow.keras.models import load_model
 
-# Download required NLTK data files
-nltk.download('punkt')
-nltk.download('wordnet')
+# Download required NLTK data files only once
+nltk.download('punkt', quiet=True)
+nltk.download('wordnet', quiet=True)
 
 # Initialize lemmatizer
 lemmatizer = WordNetLemmatizer()
@@ -24,15 +24,15 @@ words = pickle.load(open('streamlit/words.pkl', 'rb'))
 classes = pickle.load(open('streamlit/classes.pkl', 'rb'))
 model = load_model('streamlit/chatbotmodel.h5')
 
-# Function to clean up and tokenize the sentence
-def clean_up_sentence(sentence):
-    sentence_words = nltk.word_tokenize(sentence)
-    sentence_words = [lemmatizer.lemmatize(word.lower()) for word in sentence_words]
-    return sentence_words
+# Function to preprocess and clean the input sentence
+def preprocess_sentence(sentence):
+    sentence = nltk.word_tokenize(sentence.lower())  # Tokenization
+    sentence = [lemmatizer.lemmatize(word) for word in sentence if word not in nltk.corpus.stopwords.words('english')]
+    return sentence
 
-# Function to convert sentence to bag of words
+# Convert sentence into bag of words
 def bow(sentence, words):
-    sentence_words = clean_up_sentence(sentence)
+    sentence_words = preprocess_sentence(sentence)
     bag = [0] * len(words)
     for s in sentence_words:
         for i, w in enumerate(words):
@@ -42,8 +42,8 @@ def bow(sentence, words):
 
 # Predict intent
 def predict_class(sentence):
-    bag = bow(sentence, words)
-    res = model.predict(np.array([bag]))[0]
+    bow_input = bow(sentence, words)
+    res = model.predict(np.array([bow_input]))[0]
     
     # Set confidence threshold
     ERROR_THRESHOLD = 0.20
