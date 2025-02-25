@@ -1,9 +1,9 @@
 import streamlit as st
-import torch
 from transformers import BertTokenizer, BertModel
 import json
 import random
 import pickle
+import torch
 from tensorflow.keras.models import load_model
 
 # Load the pre-trained BERT tokenizer and model (this is for embeddings)
@@ -23,8 +23,8 @@ with open('./data/model/classes.pkl', 'rb') as f:
 
 # Hardcoded greeting responses
 greeting_responses = [
-    "Hello! 👋 I'm your Health Chatbot. Ask me anything, and I'll be happy to help!",
-    "Hey there! 🌍 I'm here to answer your questions about health. Just ask, and I'll do my best!",
+    "Hello! 👋 I'm your Mental Health Bot. Ask me anything, and I'll be happy to help!",
+    "Hey there! 🌍 I'm here to answer your questions about mental health. Just ask, and I'll do my best!",
     "Hi! 👋 Need health info? Just ask, and I'll provide insights!",
 ]
 
@@ -73,7 +73,7 @@ def get_response(intents_list, intents_json):
 # Streamlit Interface
 
 st.title("Health Chatbot")
-st.markdown("Ask me a health-related question!")
+st.markdown("Ask me a mental health-related question!")
 
 # User input
 user_input = st.text_input("You:")
