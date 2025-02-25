@@ -43,6 +43,8 @@ The dataset used for this project was created by the author and is available on 
 - Tested the chatbot by feeding user queries and analyzing response accuracy.
 - Conducted manual testing with sample questions to verify intent classification.
 
+  ![Image](https://github.com/user-attachments/assets/d83e3a84-13c7-4375-98d2-89046b2d5f1d)![Image](https://github.com/user-attachments/assets/61b74746-70c9-4585-9304-245ce49e1efd)
+
 ## **Results**
 - Achieved high accuracy in intent classification.
 - The chatbot successfully generated relevant responses to mental health queries.
