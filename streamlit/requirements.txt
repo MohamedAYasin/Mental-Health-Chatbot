@@ -1,4 +1,5 @@
 streamlit
+streamlit-chat
 tensorflow
 transformers
 nltk
