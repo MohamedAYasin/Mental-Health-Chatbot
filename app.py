@@ -7,6 +7,9 @@ from nltk.stem import WordNetLemmatizer
 from tensorflow.keras.models import load_model
 from streamlit_chat import message
 
+# **Set page configuration FIRST**
+st.set_page_config(page_title="Akira - Mental Health Chatbot", page_icon="🧠", layout="centered")
+
 # Initialize lemmatizer
 lemmatizer = WordNetLemmatizer()
 
@@ -63,8 +66,6 @@ def get_response(predictions):
     return "I'm here to listen. Tell me more about how you're feeling."
 
 # Streamlit UI
-st.set_page_config(page_title="Akira - Mental Health Chatbot", page_icon="🧠", layout="centered")
-
 st.title("🧠 Akira - Mental Health Bot")
 st.write("Feeling overwhelmed? I'm here to help. Type your message below.")
 
