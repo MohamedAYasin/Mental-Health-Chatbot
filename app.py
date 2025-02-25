@@ -1,68 +1,61 @@
-import nltk
-import numpy as np
+import streamlit as st
 import json
 import pickle
 import random
-import tensorflow as tf
-import streamlit as st
-from streamlit_chat import message
+import numpy as np
 from nltk.stem import WordNetLemmatizer
 from tensorflow.keras.models import load_model
-
-# Download required NLTK data files only once
-nltk.download('punkt', quiet=True)
-nltk.download('wordnet', quiet=True)
+from streamlit_chat import message
 
 # Initialize lemmatizer
 lemmatizer = WordNetLemmatizer()
 
-# Load chatbot data
-with open('streamlit/health.json') as json_file:
-    intents = json.load(json_file)
+# Load chatbot data once
+@st.cache_resource
+def load_chatbot_data():
+    with open('streamlit/health.json') as json_file:
+        intents = json.load(json_file)
+    
+    words = pickle.load(open('streamlit/words.pkl', 'rb'))
+    classes = pickle.load(open('streamlit/classes.pkl', 'rb'))
+    model = load_model('streamlit/chatbotmodel.h5')
+    
+    return intents, words, classes, model
 
-words = pickle.load(open('streamlit/words.pkl', 'rb'))
-classes = pickle.load(open('streamlit/classes.pkl', 'rb'))
-model = load_model('streamlit/chatbotmodel.h5')
+intents, words, classes, model = load_chatbot_data()
 
-# Function to preprocess and clean the input sentence
-def preprocess_sentence(sentence):
-    sentence = nltk.word_tokenize(sentence.lower())  # Tokenization
-    sentence = [lemmatizer.lemmatize(word) for word in sentence if word not in nltk.corpus.stopwords.words('english')]
-    return sentence
+# Preprocess user input
+def clean_up_sentence(sentence):
+    sentence_words = sentence.lower().split()
+    sentence_words = [lemmatizer.lemmatize(word) for word in sentence_words]
+    return sentence_words
 
-# Convert sentence into bag of words
+# Convert input into model format
 def bow(sentence, words):
-    sentence_words = preprocess_sentence(sentence)
-    bag = [0] * len(words)
-    for s in sentence_words:
-        for i, w in enumerate(words):
-            if w == s:
-                bag[i] = 1
-    return np.array(bag)
+    sentence_words = clean_up_sentence(sentence)
+    bag = [1 if w in sentence_words else 0 for w in words]
+    return np.array(bag).reshape(1, -1)
 
 # Predict intent
 def predict_class(sentence):
-    bow_input = bow(sentence, words)
-    res = model.predict(np.array([bow_input]))[0]
+    input_bow = bow(sentence, words)
+    res = model.predict(input_bow)[0]
     
-    # Set confidence threshold
-    ERROR_THRESHOLD = 0.20
+    ERROR_THRESHOLD = 0.25
     results = [(classes[i], r) for i, r in enumerate(res) if r > ERROR_THRESHOLD]
     
     return sorted(results, key=lambda x: x[1], reverse=True)
 
-# Get response based on intent
+# Get response
 def get_response(predictions):
-    if not predictions:  # If no confident prediction, return fallback message
+    if not predictions:
         return "I can't answer this question yet, please look for other resources."
     
-    tag, confidence = predictions[0]  # Get best prediction
+    tag, confidence = predictions[0]
     
-    # If confidence is low, fallback response
     if confidence < 0.5:
         return "I can't answer this question yet, please look for other resources."
 
-    # Get response from the intents dataset
     for intent in intents['intents']:
         if tag in intent['tags']:
             return random.choice(intent['responses'])
