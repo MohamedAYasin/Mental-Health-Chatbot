@@ -98,6 +98,8 @@ pip install -r requirements.txt
 - 🌐 **Streamlit:** [**Akira Mental Health Chatbot**](https://akira-mental-health-chatbot.streamlit.app/)  
 - 🎥 **Demo Video:** [**Demo Video**](https://youtu.be/NnI5l-Xzo94)  
 
+[![Watch the Demo Video](https://img.youtube.com/vi/NnI5l-Xzo94/maxresdefault.jpg)](https://youtu.be/NnI5l-Xzo94)
+
 ---  
 
 ## 🚀 **12- FUTURE IMPROVEMENTS**  
