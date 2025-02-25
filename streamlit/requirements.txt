@@ -1,8 +1,4 @@
-nltk
-numpy
-json
-pickle
-tensorflow
 streamlit
-streamlit-chat
+tensorflow
 transformers
+nltk
