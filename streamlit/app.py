@@ -18,12 +18,12 @@ nltk.download('wordnet')
 lemmatizer = WordNetLemmatizer()
 
 # Load chatbot data
-with open('./streamlit/health.json') as json_file:
+with open('health.json') as json_file:
     intents = json.load(json_file)
 
-words = pickle.load(open('./streamlit/words.pkl', 'rb'))
-classes = pickle.load(open('./streamlit/classes.pkl', 'rb'))
-model = load_model('./streamlit/chatbotmodel.h5')
+words = pickle.load(open('words.pkl', 'rb'))
+classes = pickle.load(open('classes.pkl', 'rb'))
+model = load_model('chatbotmodel.h5')
 
 # Load BERT tokenizer & model
 tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
@@ -52,6 +52,12 @@ def get_response(predictions):
         return "I can't answer this question yet, please look for other resources."
     
     tag, confidence = predictions[0]  # Get best prediction
+    
+    # If confidence is low, fallback response
+    if confidence < 0.5:
+        return "I can't answer this question yet, please look for other resources."
+
+    # Get response from the intents dataset
     for intent in intents['intents']:
         if tag in intent['tags']:
             return random.choice(intent['responses'])
@@ -72,12 +78,13 @@ if 'messages' not in st.session_state:
 user_input = st.text_input("Your message...", key="input")
 if st.button("Send") and user_input:
     st.session_state['messages'].append(("You", user_input))
-    bot_response = get_response(predict_class(user_input))
+    predictions = predict_class(user_input)
+    bot_response = get_response(predictions)
     st.session_state['messages'].append(("Akira", bot_response))
 
-# Display chat history
-for sender, msg in reversed(st.session_state['messages']):
-    message(msg, is_user=(sender == "You"))
+# Display chat history with unique keys
+for i, (sender, msg) in enumerate(reversed(st.session_state['messages'])):
+    message(msg, is_user=(sender == "You"), key=f"{sender}_{i}")
 
 # Footer
 st.markdown("<hr>", unsafe_allow_html=True)
