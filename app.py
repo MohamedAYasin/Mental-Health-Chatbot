@@ -54,9 +54,16 @@ def predict_class(sentence):
     """
     embedding = get_bert_embedding(sentence)
     res = model.predict(embedding)[0]
-    ERROR_THRESHOLD = 0.33
+    
+    # Print the predictions for debugging
+    print(f"Predictions: {res}")
+    
+    ERROR_THRESHOLD = 0.25  # Try lowering the threshold for more flexible responses
     results = [[i, r] for i, r in enumerate(res) if r > ERROR_THRESHOLD]
     results.sort(key=lambda x: x[1], reverse=True)
+
+    # Print the sorted results for debugging
+    print(f"Sorted results: {results}")
 
     if results:
         return [{'intent': classes[r[0]], 'probability': str(r[1])} for r in results]
@@ -72,9 +79,14 @@ def get_response(intents_list, intents_json):
         return "Sorry, I don't understand. Can you rephrase your question?"
 
     tag = intents_list[0]['intent']
+    print(f"Predicted tag: {tag}")  # Print the predicted tag for debugging
+    
+    # Check if the tag exists in the intents_json
     for intent in intents_json['intents']:
         if tag in intent['tags']:
+            print(f"Found response for tag: {tag}")  # Confirm tag matching
             return random.choice(intent['responses'])
+    
     return "Sorry, I couldn't understand. Please ask me something else."
 
 # ------------------- Building the Streamlit Interface -------------------
@@ -99,4 +111,4 @@ if user_input:
         response = get_response(predicted_intents, intents_dict)
 
     # Display the bot's response
-    st.write(f"Bot: {response}")
+    st.write(f"Akira: {response}")
